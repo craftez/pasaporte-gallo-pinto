@@ -1,0 +1,514 @@
+/* Pasaporte Gallo Pinto. Mobile-first.
+ * Breakpoints: 700px (campos y tarjetas en 2 columnas), 1000px (formulario y
+ * pasaporte lado a lado) y 1440px (tarjetas en 3 columnas y más aire).
+ * Todos los colores viven en :root; el resto de la hoja solo usa var().
+ * Ayuda de IA (Claude, de Anthropic): pedí apoyo para armar la paleta,
+ * la cuadrícula y revisar los breakpoints.
+ */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    --color-fondo: #fbf6ec;
+    --color-papel: #ffffff;
+    --color-tinta: #2b1d14;
+    --color-secundario: #6b5848;
+    --color-primario: #b3261e;
+    --color-primario-oscuro: #8c1d17;
+    --color-verde: #2f6b3a;
+    --color-verde-fondo: #e8f2e9;
+    --color-amarillo: #e0a100;
+    --color-amarillo-fondo: #fff5d6;
+    --color-borde: #e3d6c3;
+    --color-apagado: #f3ece0;
+    --color-alerta: #a32429;
+    --color-alerta-fondo: #fff0ef;
+    --color-foco: #1f5fbf;
+    --color-sombra: #2b1d1414;
+
+    --radio: 0.75rem;
+    --espacio: 1.25rem;
+    --borde: 1px solid var(--color-borde);
+    --foco: 3px solid var(--color-foco);
+}
+
+body {
+    max-width: 90rem;
+    margin: 0 auto;
+    padding: 0 var(--espacio);
+    background-color: var(--color-fondo);
+    color: var(--color-tinta);
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    line-height: 1.55;
+    overflow-wrap: anywhere;
+}
+
+h1,
+h2,
+h3 {
+    line-height: 1.15;
+}
+
+h1 {
+    font-size: 2.25rem;
+    letter-spacing: -0.03em;
+    color: var(--color-primario);
+}
+
+h2 {
+    margin-bottom: 1rem;
+    font-size: 1.375rem;
+}
+
+h3 {
+    font-size: 1.125rem;
+}
+
+/* ---------- Cabecera y pie ---------- */
+
+.cabecera {
+    padding: 2rem 0 1.5rem;
+    border-bottom: var(--borde);
+}
+
+.ceja,
+.paso {
+    font-size: 0.8125rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-verde);
+}
+
+.cabecera__texto {
+    margin-top: 0.5rem;
+    color: var(--color-secundario);
+}
+
+.pie {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding: 1.5rem 0 2rem;
+    border-top: var(--borde);
+    font-size: 0.875rem;
+    color: var(--color-secundario);
+}
+
+/* ---------- Distribución general ---------- */
+
+.distribucion {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--espacio);
+    padding: var(--espacio) 0 2rem;
+}
+
+.panel {
+    padding: var(--espacio);
+    background-color: var(--color-papel);
+    border: var(--borde);
+    border-radius: var(--radio);
+    box-shadow: 0 2px 8px var(--color-sombra);
+}
+
+.paso {
+    margin-bottom: 0.25rem;
+}
+
+/* ---------- Formulario ---------- */
+
+.formulario {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1rem;
+}
+
+.campo {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    min-width: 0;
+    border: 0;
+}
+
+label,
+legend {
+    font-weight: 600;
+}
+
+input[type="text"],
+input[type="date"],
+select {
+    width: 100%;
+    min-height: 2.75rem;
+    padding: 0.5rem 0.75rem;
+    border: var(--borde);
+    border-radius: 0.5rem;
+    background-color: var(--color-papel);
+    color: var(--color-tinta);
+    font: inherit;
+}
+
+input[type="text"]:hover,
+input[type="date"]:hover,
+select:hover:enabled {
+    border-color: var(--color-secundario);
+}
+
+input:focus,
+select:focus {
+    outline: var(--foco);
+    outline-offset: 2px;
+}
+
+select:disabled {
+    background-color: var(--color-apagado);
+    color: var(--color-secundario);
+    cursor: wait;
+}
+
+.campo--invalido input,
+.campo--invalido select,
+.campo--invalido .estrellas__opciones label {
+    border-color: var(--color-alerta);
+}
+
+.error {
+    min-height: 1.25rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-alerta);
+}
+
+.aviso {
+    padding: 0.5rem 0.75rem;
+    border-left: 4px solid var(--color-amarillo);
+    border-radius: 0.25rem;
+    background-color: var(--color-amarillo-fondo);
+    font-size: 0.875rem;
+}
+
+/* Calificación: radios dentro de etiquetas con forma de botón. */
+.estrellas__opciones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.35rem;
+}
+
+.estrellas__opciones label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.4rem 0.75rem;
+    border: var(--borde);
+    border-radius: 999px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.estrellas__opciones label:hover {
+    background-color: var(--color-amarillo-fondo);
+}
+
+.estrellas__opciones label:has(input:checked) {
+    border-color: var(--color-amarillo);
+    background-color: var(--color-amarillo-fondo);
+}
+
+.estrellas__opciones label:has(input:focus) {
+    outline: var(--foco);
+    outline-offset: 2px;
+}
+
+.estrellas__opciones input {
+    accent-color: var(--color-primario);
+}
+
+.estrellas__opciones input:focus {
+    outline: none;
+}
+
+.campo--check {
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.campo--check input {
+    width: 1.25rem;
+    height: 1.25rem;
+    accent-color: var(--color-verde);
+}
+
+/* ---------- Botones ---------- */
+
+.boton,
+.tarjeta__boton {
+    min-height: 2.75rem;
+    padding: 0.5rem 1.25rem;
+    border: 2px solid var(--color-primario);
+    border-radius: 999px;
+    background-color: var(--color-primario);
+    color: var(--color-papel);
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.boton:hover {
+    border-color: var(--color-primario-oscuro);
+    background-color: var(--color-primario-oscuro);
+}
+
+.boton:focus-visible,
+.tarjeta__boton:focus-visible {
+    outline: var(--foco);
+    outline-offset: 3px;
+}
+
+.tarjeta__boton {
+    min-height: 2.25rem;
+    padding: 0.3rem 0.9rem;
+    border-color: var(--color-borde);
+    background-color: var(--color-papel);
+    color: var(--color-tinta);
+    font-size: 0.875rem;
+}
+
+.tarjeta__boton:hover {
+    border-color: var(--color-amarillo);
+    background-color: var(--color-amarillo-fondo);
+}
+
+.tarjeta__boton--borrar:hover {
+    border-color: var(--color-alerta);
+    background-color: var(--color-alerta-fondo);
+    color: var(--color-alerta);
+}
+
+.tarjeta__boton[aria-pressed="true"] {
+    border-color: var(--color-amarillo);
+    background-color: var(--color-amarillo);
+    color: var(--color-tinta);
+}
+
+/* ---------- Resumen y sellos ---------- */
+
+.resumen {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.75rem;
+}
+
+.resumen__dato {
+    padding: 0.75rem 1rem;
+    border-radius: var(--radio);
+    background-color: var(--color-apagado);
+}
+
+.resumen__dato dt {
+    font-size: 0.8125rem;
+    color: var(--color-secundario);
+}
+
+.resumen__dato dd {
+    font-size: 1.75rem;
+    font-weight: 800;
+}
+
+.sellos {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin: 1rem 0;
+    list-style: none;
+}
+
+.sello {
+    padding: 0.25rem 0.75rem;
+    border: 2px dashed var(--color-borde);
+    border-radius: 999px;
+    font-size: 0.8125rem;
+    color: var(--color-secundario);
+}
+
+.sello--puesto {
+    border-style: solid;
+    border-color: var(--color-verde);
+    background-color: var(--color-verde-fondo);
+    color: var(--color-verde);
+    font-weight: 700;
+}
+
+.completo {
+    margin-bottom: 1rem;
+    padding: 0.75rem 1rem;
+    border-radius: var(--radio);
+    background-color: var(--color-verde);
+    color: var(--color-papel);
+    font-weight: 700;
+}
+
+/* ---------- Lista de visitas ---------- */
+
+.barra {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin: 1.5rem 0 1rem;
+    padding-top: 1rem;
+    border-top: var(--borde);
+}
+
+.vacio {
+    padding: 1.5rem;
+    border: 2px dashed var(--color-borde);
+    border-radius: var(--radio);
+    text-align: center;
+    color: var(--color-secundario);
+}
+
+.tarjetas {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1rem;
+    list-style: none;
+}
+
+.tarjeta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 1rem;
+    border: var(--borde);
+    border-top: 4px solid var(--color-verde);
+    border-radius: var(--radio);
+    background-color: var(--color-papel);
+}
+
+.tarjeta--favorita {
+    border-color: var(--color-amarillo);
+    border-top-color: var(--color-amarillo);
+    background-color: var(--color-amarillo-fondo);
+}
+
+.tarjeta__provincia {
+    align-self: flex-start;
+    padding: 0.1rem 0.6rem;
+    border-radius: 999px;
+    background-color: var(--color-verde-fondo);
+    color: var(--color-verde);
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.tarjeta__datos {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 0.2rem 0.75rem;
+    font-size: 0.9375rem;
+}
+
+.tarjeta__datos dt {
+    color: var(--color-secundario);
+}
+
+.tarjeta__estrellas {
+    color: var(--color-amarillo);
+    letter-spacing: 0.05em;
+}
+
+.tarjeta__acciones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: auto;
+    padding-top: 0.5rem;
+}
+
+/* ---------- 700px: tablet ---------- */
+
+@media (min-width: 700px) {
+    h1 {
+        font-size: 2.75rem;
+    }
+
+    .formulario {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        column-gap: var(--espacio);
+    }
+
+    .estrellas,
+    .formulario .boton {
+        grid-column: 1 / -1;
+    }
+
+    .formulario .boton {
+        justify-self: start;
+    }
+
+    .resumen {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .barra {
+        flex-direction: row;
+        align-items: flex-end;
+        justify-content: space-between;
+    }
+
+    .campo--filtro {
+        width: 14rem;
+    }
+
+    .tarjetas {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .pie {
+        flex-direction: row;
+        justify-content: space-between;
+    }
+}
+
+/* ---------- 1000px: formulario y pasaporte lado a lado ---------- */
+
+@media (min-width: 1000px) {
+    .distribucion {
+        grid-template-columns: 22rem minmax(0, 1fr);
+        align-items: start;
+    }
+
+    /* El formulario vuelve a una columna porque su panel ahora es angosto. */
+    .formulario {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+/* ---------- 1440px: pantallas grandes ---------- */
+
+@media (min-width: 1440px) {
+    :root {
+        --espacio: 2rem;
+    }
+
+    h1 {
+        font-size: 3.25rem;
+    }
+
+    .distribucion {
+        grid-template-columns: 26rem minmax(0, 1fr);
+    }
+
+    .tarjetas {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
