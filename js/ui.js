@@ -1,7 +1,7 @@
 /*
  * ui.js: funciones que crean y actualizan elementos del DOM.
- * No guardan estado: reciben datos y los pintan. Todo con createElement y
- * textContent; nunca innerHTML con lo que escribió el usuario.
+ * No guardan estado: reciben datos y los pintan. Todo se crea con
+ * createElement y textContent, así el texto del usuario nunca se lee como HTML.
  * Uso de IA (Claude, de Anthropic): apoyo para organizar las funciones de pintado.
  */
 "use strict";
