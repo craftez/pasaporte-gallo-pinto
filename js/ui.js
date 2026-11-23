@@ -62,12 +62,42 @@ function formatearFecha(fechaISO) {
     });
 }
 
-function estrellas(calificacion) {
-    return "★".repeat(calificacion) + "☆".repeat(5 - calificacion);
+// Crea un <svg> que reutiliza un ícono del sprite de index.html.
+function crearIcono(nombre, clase) {
+    const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    svg.setAttribute("class", clase ? `icono ${clase}` : "icono");
+    svg.setAttribute("aria-hidden", "true");
+    svg.setAttribute("focusable", "false");
+    const uso = document.createElementNS("http://www.w3.org/2000/svg", "use");
+    uso.setAttribute("href", `#icono-${nombre}`);
+    svg.append(uso);
+    return svg;
 }
 
-function agregarDato(lista, termino, valor, claseValor) {
-    lista.append(crearElemento("dt", "", termino), crearElemento("dd", claseValor, valor));
+// Cinco estrellas (llenas hasta la nota) y el texto "4/5", que es lo que lee el lector de pantalla.
+function crearNota(calificacion) {
+    const nota = crearElemento("span", "nota");
+    for (let i = 1; i <= 5; i++) {
+        nota.append(crearIcono("estrella", i <= calificacion ? "estrella" : "estrella estrella--vacia"));
+    }
+    nota.append(crearElemento("span", "nota__texto", `${calificacion}/5`));
+    return nota;
+}
+
+function crearDato(termino, valor, clase) {
+    const dato = crearElemento("div", clase ? `dato ${clase}` : "dato");
+    const descripcion = crearElemento("dd");
+    descripcion.append(valor);
+    dato.append(crearElemento("dt", "", termino), descripcion);
+    return dato;
+}
+
+function crearBoton(texto, accion, clase) {
+    const boton = crearElemento("button", `boton ${clase}`);
+    boton.type = "button";
+    boton.dataset.accion = accion;
+    boton.append(texto);
+    return boton;
 }
 
 function crearTarjeta(visita) {
@@ -76,27 +106,23 @@ function crearTarjeta(visita) {
     tarjeta.classList.toggle("tarjeta--favorita", visita.favorita);
 
     const datos = crearElemento("dl", "tarjeta__datos");
-    agregarDato(datos, "Plato", visita.plato);
-    agregarDato(datos, "Nota", `${estrellas(visita.calificacion)} ${visita.calificacion}/5`, "tarjeta__estrellas");
-    agregarDato(datos, "Fecha", formatearFecha(visita.fecha));
-    agregarDato(datos, "Compa", visita.compa);
-    agregarDato(datos, "¿Volvería?", visita.volveria ? "Sí, sin pensarlo" : "No");
+    datos.append(
+        crearDato("Plato", visita.plato, "dato--ancho"),
+        crearDato("Nota", crearNota(visita.calificacion), "dato--ancho"),
+        crearDato("Compa de viaje", visita.compa),
+        crearDato("¿Volvería?", visita.volveria ? "Sí" : "No"),
+    );
 
-    const botonFavorita = crearElemento("button", "tarjeta__boton", visita.favorita ? "★ Favorita" : "☆ Favorita");
-    botonFavorita.type = "button";
-    botonFavorita.dataset.accion = "favorita";
+    const botonFavorita = crearBoton("Favorita", "favorita", "boton--secundario boton--favorita");
+    botonFavorita.prepend(crearIcono("estrella"));
     botonFavorita.setAttribute("aria-pressed", String(visita.favorita));
 
-    const botonBorrar = crearElemento("button", "tarjeta__boton tarjeta__boton--borrar", "Borrar");
-    botonBorrar.type = "button";
-    botonBorrar.dataset.accion = "borrar";
-
     const acciones = crearElemento("div", "tarjeta__acciones");
-    acciones.append(botonFavorita, botonBorrar);
+    acciones.append(botonFavorita, crearBoton("Borrar", "borrar", "boton--secundario boton--peligro"));
 
     tarjeta.append(
-        crearElemento("span", "tarjeta__provincia", visita.provincia),
-        crearElemento("h4", "", visita.nombre),
+        crearElemento("h4", "tarjeta__nombre", visita.nombre),
+        crearElemento("p", "tarjeta__meta", `${visita.provincia} · ${formatearFecha(visita.fecha)}`),
         datos,
         acciones,
     );
@@ -111,16 +137,30 @@ function pintarVisitas(lista, mensajeVacio, visitas, textoVacio) {
 
 // ---------- Resumen del pasaporte ----------
 
+function crearSello(provincia, puesto) {
+    const sello = crearElemento("li", puesto ? "sello sello--puesto" : "sello");
+    const estado = crearElemento("span", "sello__estado", puesto ? "Sellada" : "Pendiente");
+    if (puesto) {
+        estado.prepend(crearIcono("check"));
+    }
+    sello.append(crearElemento("span", "sello__nombre", provincia), estado);
+    return sello;
+}
+
 function pintarResumen(resumen, provincias) {
+    const faltan = provincias.length - resumen.selladas.size;
     document.querySelector("#total-visitas").textContent = resumen.total;
     document.querySelector("#promedio").textContent = resumen.total ? resumen.promedio.toFixed(1) : "—";
     document.querySelector("#provincias-selladas").textContent = `${resumen.selladas.size} de ${provincias.length}`;
-    document.querySelector("#pasaporte-completo").hidden = resumen.selladas.size < provincias.length;
+    document.querySelector("#pasaporte-completo").hidden = faltan > 0;
 
-    const sellos = provincias.map((provincia) => {
-        const puesto = resumen.selladas.has(provincia);
-        const sello = crearElemento("li", puesto ? "sello sello--puesto" : "sello", puesto ? `✓ ${provincia}` : provincia);
-        return sello;
-    });
-    document.querySelector("#sellos").replaceChildren(...sellos);
+    const textoFaltan = document.querySelector("#faltan");
+    textoFaltan.hidden = faltan === 0;
+    textoFaltan.textContent = faltan === 1
+        ? "Falta 1 provincia para completar el pasaporte."
+        : `Faltan ${faltan} provincias para completar el pasaporte.`;
+
+    document.querySelector("#sellos").replaceChildren(
+        ...provincias.map((provincia) => crearSello(provincia, resumen.selladas.has(provincia))),
+    );
 }

@@ -11,10 +11,10 @@ Trueno, el perezoso más rápido de Costa Rica, va a recorrer las siete provinci
 2. Llená **Registrar visita**: nombre de la soda, provincia, plato, calificación (1 a 5 ★), fecha, compa de viaje y si volvería. Tocá **Sellar visita**.
 3. Si falta algo, el error aparece junto al campo y se quita apenas lo corregís.
 4. La visita aparece como tarjeta en **Mi pasaporte**. En cada tarjeta:
-   - **Favorita** la marca o desmarca (la tarjeta cambia a amarillo).
+   - **Favorita** la marca o desmarca (la tarjeta cambia a color ámbar).
    - **Borrar** pide confirmación y la elimina.
 5. **Filtrar por provincia** muestra solo las tarjetas de esa provincia. Si no hay ninguna, aparece un mensaje.
-6. El resumen muestra el total de sodas, la calificación promedio (un decimal) y las provincias selladas («X de 7»). Con las 7 aparece el mensaje de pasaporte completo.
+6. Arriba del pasaporte hay un sello por provincia (sellada o pendiente) y cuántas faltan. El resumen muestra el total de sodas, la calificación promedio (un decimal) y las provincias selladas («X de 7»). Con las 7 aparece el mensaje de pasaporte completo.
 7. Al recargar la página, las visitas, las favoritas y el resumen siguen ahí.
 
 ## Estructura de archivos
@@ -45,7 +45,8 @@ Los cuatro scripts se cargan en el `<head>` con `defer` en este orden: `storage.
   - Se muestran todos los errores a la vez y el foco va al primero. Cuando un campo tiene error, se revalida al escribir o cambiarlo, y el mensaje desaparece al corregirlo.
 - **Tarjetas** (`ui.js`): se crean desde el array con `createElement` y `textContent`, nunca con HTML armado con texto del usuario. Cada visita es un objeto con `id` único, `nombre`, `provincia`, `plato`, `calificacion`, `fecha`, `compa`, `volveria` y `favorita`.
 - **Delegación de eventos**: un solo `addEventListener("click")` en `#lista-visitas` atiende los botones Favorita y Borrar de todas las tarjetas (`closest("button[data-accion]")`).
-- **Resumen**: total, promedio con `toFixed(1)`, provincias distintas con un `Set` y sellos por provincia.
+- **Resumen**: total, promedio con `toFixed(1)`, provincias distintas con un `Set`, un sello por provincia y cuántas faltan.
+- **Estilos**: la misma línea visual de las prácticas 9 a 11 (paleta azul, Arial, esquinas de 4 px y paneles con borde superior). Los íconos (estrella y check) son un solo sprite SVG en `index.html` que `ui.js` reutiliza con `<use>`.
 - **Persistencia** (`storage.js`): las visitas se guardan en `localStorage` bajo `pasaporteGalloPinto.visitas` después de cada cambio. Si el contenido está dañado o no es un array, se usa `[]`.
 
 ## API usada
