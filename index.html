@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Pasaporte Gallo Pinto: registro de las sodas que Trueno visita en las siete provincias de Costa Rica.">
+    <link rel="icon" href="data:,">
+    <link rel="stylesheet" href="css/estilos.css">
+    <script src="js/storage.js" defer></script>
+    <script src="js/api.js" defer></script>
+    <script src="js/ui.js" defer></script>
+    <script src="js/app.js" defer></script>
+    <title>Pasaporte Gallo Pinto | Eduardo Zamora</title>
+</head>
+<body>
+    <header class="cabecera">
+        <p class="ceja">Ruta de sodas de Trueno · 7 provincias</p>
+        <h1>Pasaporte Gallo Pinto</h1>
+        <p class="cabecera__texto">Cada soda, un plato, una nota. A paso de perezoso, pero sin perder la cuenta.</p>
+    </header>
+
+    <main class="distribucion">
+        <section class="panel" id="registro" aria-labelledby="titulo-registro">
+            <p class="paso">01 / REGISTRO</p>
+            <h2 id="titulo-registro">Registrar visita</h2>
+
+            <form class="formulario" id="form-visita" novalidate>
+                <div class="campo">
+                    <label for="nombre">Nombre de la soda</label>
+                    <input type="text" id="nombre" name="nombre" placeholder="Ej. Soda Doña Ana" maxlength="60" autocomplete="off" required aria-describedby="error-nombre">
+                    <p class="error" id="error-nombre" aria-live="polite"></p>
+                </div>
+
+                <div class="campo">
+                    <label for="provincia">Provincia</label>
+                    <select id="provincia" name="provincia" required aria-describedby="error-provincia">
+                        <option value="">Elegí una provincia</option>
+                        <option>San José</option>
+                        <option>Alajuela</option>
+                        <option>Cartago</option>
+                        <option>Heredia</option>
+                        <option>Guanacaste</option>
+                        <option>Puntarenas</option>
+                        <option>Limón</option>
+                    </select>
+                    <p class="error" id="error-provincia" aria-live="polite"></p>
+                </div>
+
+                <div class="campo">
+                    <label for="plato">Plato que pidió</label>
+                    <input type="text" id="plato" name="plato" placeholder="Ej. Casado con pescado" maxlength="60" autocomplete="off" required aria-describedby="error-plato">
+                    <p class="error" id="error-plato" aria-live="polite"></p>
+                </div>
+
+                <fieldset class="campo estrellas" aria-describedby="error-calificacion">
+                    <legend>Calificación</legend>
+                    <div class="estrellas__opciones">
+                        <label><input type="radio" name="calificacion" value="1"> 1 ★</label>
+                        <label><input type="radio" name="calificacion" value="2"> 2 ★</label>
+                        <label><input type="radio" name="calificacion" value="3"> 3 ★</label>
+                        <label><input type="radio" name="calificacion" value="4"> 4 ★</label>
+                        <label><input type="radio" name="calificacion" value="5"> 5 ★</label>
+                    </div>
+                    <p class="error" id="error-calificacion" aria-live="polite"></p>
+                </fieldset>
+
+                <div class="campo">
+                    <label for="fecha">Fecha de la visita</label>
+                    <input type="date" id="fecha" name="fecha" required aria-describedby="error-fecha">
+                    <p class="error" id="error-fecha" aria-live="polite"></p>
+                </div>
+
+                <div class="campo">
+                    <label for="compa">Compa de viaje</label>
+                    <select id="compa" name="compa" disabled aria-describedby="aviso-compas">
+                        <option value="">Cargando compas...</option>
+                    </select>
+                    <p class="aviso" id="aviso-compas" role="status" hidden></p>
+                </div>
+
+                <div class="campo campo--check">
+                    <input type="checkbox" id="volveria" name="volveria">
+                    <label for="volveria">¿Volvería?</label>
+                </div>
+
+                <button type="submit" class="boton">Sellar visita</button>
+            </form>
+        </section>
+
+        <section class="panel" id="pasaporte" aria-labelledby="titulo-pasaporte">
+            <p class="paso">02 / PASAPORTE</p>
+            <h2 id="titulo-pasaporte">Mi pasaporte</h2>
+
+            <dl class="resumen">
+                <div class="resumen__dato">
+                    <dt>Sodas visitadas</dt>
+                    <dd id="total-visitas">0</dd>
+                </div>
+                <div class="resumen__dato">
+                    <dt>Calificación promedio</dt>
+                    <dd id="promedio">—</dd>
+                </div>
+                <div class="resumen__dato">
+                    <dt>Provincias selladas</dt>
+                    <dd id="provincias-selladas">0 de 7</dd>
+                </div>
+            </dl>
+
+            <ul class="sellos" id="sellos" aria-label="Sellos por provincia"></ul>
+
+            <p class="completo" id="pasaporte-completo" role="status" hidden>¡Pasaporte completo! Trueno selló las 7 provincias. Ahora sí, a dormir una siesta de seis meses.</p>
+
+            <div class="barra">
+                <h3>Visitas</h3>
+                <div class="campo campo--filtro">
+                    <label for="filtro">Filtrar por provincia</label>
+                    <select id="filtro" name="filtro">
+                        <option value="">Todas</option>
+                        <option>San José</option>
+                        <option>Alajuela</option>
+                        <option>Cartago</option>
+                        <option>Heredia</option>
+                        <option>Guanacaste</option>
+                        <option>Puntarenas</option>
+                        <option>Limón</option>
+                    </select>
+                </div>
+            </div>
+
+            <p class="vacio" id="lista-vacia" hidden></p>
+            <ul class="tarjetas" id="lista-visitas"></ul>
+        </section>
+    </main>
+
+    <footer class="pie">
+        <p>Práctica 12 · Eduardo Zamora · Diseño y Programación Web</p>
+        <p>Compas de viaje: JSONPlaceholder</p>
+    </footer>
+</body>
+</html>
